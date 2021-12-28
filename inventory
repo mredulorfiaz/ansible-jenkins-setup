@@ -1,0 +1,1 @@
+vagrant ansible_host=192.168.27.2 ansible_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/orfiaj/vagrant/.vagrant/machines/vagrant/virtualbox/private_key

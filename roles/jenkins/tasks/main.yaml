@@ -1,0 +1,55 @@
+---
+- name: Add jenkins repo key
+  become: true
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    state: present
+
+- name: Add package url to source list
+  become: true
+  apt_repository:
+    repo: deb http://pkg.jenkins.io/debian-stable binary/
+    filename: jenkins.list
+
+- name: Install jenkins
+  apt:
+    name: "jenkins={{ jenkins_version }}"
+    state: present
+    update_cache: yes
+
+- name: Copy config to jenkins config directory
+  template: 
+    src: "config.xml"
+    dest: "{{ config_file_location }}"
+  notify: Restart Jenkins
+
+- name: Ensure Jenkins has started
+  systemd:
+    name: jenkins
+    state: started
+  register: started_jenkins
+
+- name: Get admin password
+  command: "cat {{ pass_file }}"
+  register: admin_pass
+  changed_when: false
+
+- name: Create Jenkins CLI directory
+  file:
+    path: "{{ jenkins_cli_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Get Jenkins CLI
+  get_url:
+    url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+    dest: "{{ jenkins_cli_dest }}"
+    mode: 0440
+
+- name: Install necessary plugins
+  command: "java -jar {{ jenkins_cli_dest }} -s http://localhost:8080 -auth admin:{{ admin_pass.stdout }} install-plugin {{ item }}"
+  when: plugins is defined
+  with_items:  "{{ plugins  }}"
+  notify: Restart Jenkins
+
+

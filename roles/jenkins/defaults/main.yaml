@@ -1,0 +1,9 @@
+config_file_location: /var/lib/jenkins/config.xml
+jenkins_version: 2.319.1
+pass_file: /var/lib/jenkins/secrets/initialAdminPassword
+jenkins_cli_directory: /opt/jenkins
+jenkins_cli_dest: /opt/jenkins/jenkins-cli.jar
+jenkins_data_directory: /jenkins-data
+plugins:
+ - 'github'
+ - 'ssh-agent'
