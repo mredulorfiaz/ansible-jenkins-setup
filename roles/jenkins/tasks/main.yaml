@@ -23,12 +23,6 @@
     dest: "{{ config_file_location }}"
   notify: Restart Jenkins
 
-- name: Ensure Jenkins has started
-  systemd:
-    name: jenkins
-    state: started
-  register: started_jenkins
-
 - name: Get admin password
   command: "cat {{ pass_file }}"
   register: admin_pass
